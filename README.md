@@ -10,8 +10,7 @@
 
 ### Directory Setting
 
-- pdf [Extracted Dataset File]
-- word [Extracted Dataset File]
+- Resume.csv [Dataset File]
 - main.py [run XAI & Data Converter]
 - XAI.py [XAI model implementation]
 - datasets.py [Make Train_set, Test_set using csv file]
@@ -26,7 +25,7 @@ python main.py
 
 
 
-## Function Explaination
+## Function Explanation
 
 ### main.py [Run AI Model + XAI model]
 
