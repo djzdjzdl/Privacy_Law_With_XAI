@@ -1,3 +1,4 @@
+from matplotlib.pyplot import text
 import datasets
 from sklearn.feature_extraction.text import TfidfVectorizer
 import sklearn.ensemble
@@ -25,20 +26,22 @@ class Do_XAI:
     ti = TfidfVectorizer(stop_words='english', max_features=1000, lowercase=False)
 
     def __init__(self):
-        x_train, y_train, x_test, y_test = Do_XAI.Get_Dataset()
+        x_train, y_train, x_test, y_test = Do_XAI.Get_Dataset('./Resume.csv')
         model, pred = Do_AI.RFClassifier(Do_XAI.ti.fit_transform(x_train), y_train, Do_XAI.ti.fit_transform(x_test), y_test)
-        Do_XAI.Get_Lime(x_train, y_train, x_test, y_test, make_pipeline(Do_XAI.ti, model))
+        Do_XAI.Get_Lime(x_test, make_pipeline(Do_XAI.ti, model))
 
-    def Get_Dataset():
-        train_set, test_set = datasets.Fetch_Dataset('./Resume.csv', 1, 3, 0.2).Returner()
+    def Get_Dataset(file_path):
+        train_set, test_set = datasets.Fetch_Dataset(file_path, 1, 3, 0.2).Returner()
         return np.array(train_set).T[0], np.array(train_set).T[1], np.array(test_set).T[0], np.array(test_set).T[1]
 
-    def Get_Lime(x_train, y_train, x_test, y_test, pipelines):
-        XAI = LimeTextExplainer(class_names=[0, 1])
-        exp = XAI.explain_instance(x_test[1], pipelines.predict_proba, num_features=20)
+    def Get_Lime(text_datasets, pipelines):
+        Do_XAI.Do_Lime(LimeTextExplainer(class_names=[0, 1]), text_datasets, pipelines, 1)
+
+    def Do_Lime(XAI, text_datasets, pipelines, idx):
+        exp = XAI.explain_instance(text_datasets[idx], pipelines.predict_proba, num_features=20)
         exp.as_list()
         fig = exp.as_pyplot_figure()
-        fig.savefig('./test.jpg')
+        fig.savefig('./Analyze_{}.jpg'.format(idx))
 
 if __name__ == "__main__":
     Do_XAI()
